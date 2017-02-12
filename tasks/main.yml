@@ -1,0 +1,42 @@
+---
+# tasks file for ansible-role-nzbhydra
+- fail:
+    msg: 'This role is designed for systems using systemd'
+  # Default to systemd, in case fact gathering is off.
+  when: (ansible_service_mgr | default('systemd') != 'systemd'
+
+- name: main | create supplementary groups
+  group:
+    name: '{{ nzbhydra_systemd_supplementary_group }}'
+  loop_control:
+    loop_var: nzbhydra_systemd_supplementary_group
+  with_items: '{{ nzbhydra_systemd_supplementary_groups }}'
+
+- name: main | create custom systemd configuration directory
+  file:
+    path: '{{ nzbhydra_systemd_custom_config | dirname }}'
+    state: directory
+
+- name: main | template custom systemd configuration
+  template:
+    src: nzbhydra.service.j2
+    dest: '{{ nzbhydra_systemd_custom_config }}'
+
+- name: main | create nzbhydra user
+  user:
+    name: nzbhydra
+    group: nzbhydra
+    shell: '/sbin/nologin'
+    state: present
+
+- name: main | create data dir and config file parent dir
+  file:
+    path: '{{ nzbhydra_dir }}'
+    state: directory
+    owner: nzbhydra
+    group: nzbhydra
+  loop_control:
+    loop_var: nzbhydra_dir
+  with_items:
+    - '{{ nzbhydra_data_dir }}'
+    - '{{ nzbhydra_config_file | dirname }}'

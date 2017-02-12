@@ -1,0 +1,5 @@
+[Service]
+ExecStart=
+Type=
+ExecStart=/usr/bin/nzbhydra --nobrowser --config {{ nzbhydra_config_file | quote }} --database {{ nzbhydra_data_dir | quote }}/nzbhydra.db
+Type=simple

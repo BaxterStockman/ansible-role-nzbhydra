@@ -1,0 +1,7 @@
+---
+# defaults file for ansible-role-nzbhydra
+
+nzbhydra_systemd_supplementary_groups:
+  - downloads
+nzbhydra_data_dir: /var/data/nzbhydra
+nzbhydra_config_file: '{{ nzbhydra_data_dir }}/settings.cfg'
